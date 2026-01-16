@@ -47,8 +47,6 @@ st.markdown("---")
 st.header("📋 Beneficiary Information")
 
 col1, col2 = st.columns(2)
-col3, col4, col5 = st.columns(3)
-col6, col7 = st.columns(2)
 
 with col1:
     full_name = st.text_input("Full Name", placeholder="e.g., Juan Dela Cruz")
@@ -79,16 +77,11 @@ with col2:
         ["Owned", "Rented", "Informal Settler", "Living with Relatives"])
 
 # Checkboxes for specific criteria
-with col3:
-    is_4ps = st.checkbox("4Ps Beneficiary")
-with col4:
-    has_pwd = st.checkbox("Disaster-Affected")
-with col5:
-    has_senior = st.checkbox("Solo Parent")
-with col6:
-    is_solo_parent = st.checkbox("Senior Citizen in Household")
-with col7:
-    is_disaster_affected = st.checkbox("PWD in Household")
+is_4ps = st.checkbox("4Ps Beneficiary")
+has_pwd = st.checkbox("Disaster-Affected")
+has_senior = st.checkbox("Solo Parent")
+is_solo_parent = st.checkbox("Senior Citizen in Household")
+is_disaster_affected = st.checkbox("PWD in Household")
 
 # --- Household Members Section ---
 household_members_data = []
