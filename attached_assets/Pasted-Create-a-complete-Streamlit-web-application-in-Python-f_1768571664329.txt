@@ -1,0 +1,70 @@
+Create a complete Streamlit web application in Python for a Social Amelioration Program (SAP) Eligibility Checker.
+
+Requirements:
+
+1. Load a pre-trained machine learning model named "eligibility_model.joblib" using joblib.
+2. The model exposes a function or prediction method that takes structured beneficiary input data and returns:
+   - Eligibility result (Eligible / Not Eligible)
+   - A short explanation or reason summary (string or derived logic).
+
+3. Build a Streamlit UI that collects the following beneficiary inputs:
+   - Full Name
+   - Sex (Male/Female)
+   - Age
+   - Barangay
+   - City / Municipality
+   - Province
+   - Employment Status (Employed, Self-Employed, Unemployed, Informal)
+   - Monthly Household Income
+   - Household Size
+   - 4Ps Beneficiary (Yes/No)
+   - PWD in Household (Yes/No)
+   - Senior Citizen in Household (Yes/No)
+   - Solo Parent (Yes/No)
+   - Disaster-Affected (Yes/No)
+6. Househould Size
+   - When house hold size is more than 1 have them input their name(Surname, First name, Middle name,relations to that person, gender, occupation, sector(A-F), Health condition(1-5))
+   - with the legend for sector and Health Condition is 
+   📌 SECTOR LEGEND (A–F)
+Code	Meaning
+A	Senior Citizen
+B	Pregnant
+C	Lactating Mother
+D	Person with Disability (PWD)
+E	Solo Parent
+F	Homeless
+🩺 HEALTH CONDITION LEGEND (1–5)
+Code	Meaning
+1	Heart Disease
+2	Hypertension
+3	Lung Disease
+4	Diabetes
+5	Cancer
+
+5. After submission:
+   - Display ALL entered data clearly in a "Submitted Information" section for transparency.
+   - Call the eligibility_model using the submitted data.
+   - Display the eligibility decision prominently:
+     - Green badge if Eligible
+     - Red badge if Not Eligible
+
+6. Display a "Summary Reason" section explaining:
+   - Why the applicant is eligible OR
+   - Why the applicant is not eligible
+   (Use model output is eligible or not but you must get that result and make a summary of why or why not it is eligible.)
+
+7. UI/UX Requirements:
+   - Use Streamlit layout with sections and headers.
+   - Validate numeric inputs (age, income, household size).
+   - Show warnings if required fields are missing.
+   - Use Streamlit components only (no external frontend frameworks).
+
+8. Code Requirements:
+   - Use clean, modular Python code.
+   - Include comments explaining each section.
+   - Handle model loading errors gracefully.
+   - Assume the model expects a pandas DataFrame input.
+
+9. Output:
+   - The app must run using: streamlit run app.py
+
