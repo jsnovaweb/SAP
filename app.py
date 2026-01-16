@@ -6,21 +6,25 @@ import numpy as np
 
 # --- Configuration ---
 MODEL_PATH = "attached_assets/eligibility_model_1768571674807.joblib"
-st.set_page_config(page_title="SAP Eligibility Checker", page_icon="🇵🇭", layout="wide")
+st.set_page_config(page_title="SAP Eligibility Checker",
+                   page_icon="🇵🇭",
+                   layout="wide")
+
 
 # --- Load Model ---
 @st.cache_resource
 def load_model():
     """Loads the pre-trained model from the file system."""
-    if not os.path.exists(MODEL_PATH):
-        st.error(f"Model file not found at: {MODEL_PATH}")
+    if not os.path.exists('eligibility_model.joblib'):
+        st.error(f"Model file not found at: {'eligibility_model.joblib'}")
         return None
     try:
-        model = joblib.load(MODEL_PATH)
+        model = joblib.load('eligibility_model.joblib')
         return model
     except Exception as e:
         st.error(f"Error loading model: {e}")
         return None
+
 
 model = load_model()
 
@@ -60,12 +64,25 @@ with col1:
     province = st.text_input("Province")
 
 with col2:
-    employment_status = st.selectbox("Employment Status", ["Employed", "Self-Employed", "Unemployed", "Informal"])
-    employed_members = st.number_input("Number of Employed Members", min_value=0, step=1, value=0)
-    monthly_income = st.number_input("Monthly Household Income (PHP)", min_value=0.0, step=100.0, format="%.2f")
-    household_size = st.number_input("Household Size", min_value=1, step=1, value=1)
-    housing_type = st.selectbox("Housing Type", ["Owned", "Rented", "Informal Settler", "Living with Relatives"])
-    
+    employment_status = st.selectbox(
+        "Employment Status",
+        ["Employed", "Self-Employed", "Unemployed", "Informal"])
+    employed_members = st.number_input("Number of Employed Members",
+                                       min_value=0,
+                                       step=1,
+                                       value=0)
+    monthly_income = st.number_input("Monthly Household Income (PHP)",
+                                     min_value=0.0,
+                                     step=100.0,
+                                     format="%.2f")
+    household_size = st.number_input("Household Size",
+                                     min_value=1,
+                                     step=1,
+                                     value=1)
+    housing_type = st.selectbox(
+        "Housing Type",
+        ["Owned", "Rented", "Informal Settler", "Living with Relatives"])
+
     # Checkboxes for specific criteria
     is_4ps = st.checkbox("4Ps Beneficiary")
     has_pwd = st.checkbox("PWD in Household")
@@ -79,7 +96,9 @@ household_members_data = []
 if household_size > 1:
     st.markdown("---")
     st.header("👨‍👩‍👧‍👦 Household Members Details")
-    st.info(f"Please provide details for the other {int(household_size) - 1} member(s).")
+    st.info(
+        f"Please provide details for the other {int(household_size) - 1} member(s)."
+    )
 
     # Display Legends
     with st.expander("📌 View Legends for Sector and Health Condition"):
@@ -96,20 +115,27 @@ if household_size > 1:
     for i in range(int(household_size) - 1):
         st.subheader(f"Member #{i + 1}")
         m_col1, m_col2, m_col3 = st.columns(3)
-        
+
         with m_col1:
             m_surname = st.text_input(f"Surname #{i+1}", key=f"sur_{i}")
             m_firstname = st.text_input(f"First Name #{i+1}", key=f"first_{i}")
             m_middlename = st.text_input(f"Middle Name #{i+1}", key=f"mid_{i}")
-        
+
         with m_col2:
-            m_relation = st.text_input(f"Relation to Head #{i+1}", key=f"rel_{i}")
-            m_gender = st.selectbox(f"Gender #{i+1}", ["Male", "Female"], key=f"gen_{i}")
+            m_relation = st.text_input(f"Relation to Head #{i+1}",
+                                       key=f"rel_{i}")
+            m_gender = st.selectbox(f"Gender #{i+1}", ["Male", "Female"],
+                                    key=f"gen_{i}")
             m_occupation = st.text_input(f"Occupation #{i+1}", key=f"occ_{i}")
-        
+
         with m_col3:
-            m_sector = st.multiselect(f"Sector #{i+1} (Select codes)", options=list(SECTOR_LEGEND.keys()), key=f"sec_{i}")
-            m_health = st.multiselect(f"Health Condition #{i+1} (Select codes)", options=list(HEALTH_CONDITION_LEGEND.keys()), key=f"hea_{i}")
+            m_sector = st.multiselect(f"Sector #{i+1} (Select codes)",
+                                      options=list(SECTOR_LEGEND.keys()),
+                                      key=f"sec_{i}")
+            m_health = st.multiselect(
+                f"Health Condition #{i+1} (Select codes)",
+                options=list(HEALTH_CONDITION_LEGEND.keys()),
+                key=f"hea_{i}")
 
         household_members_data.append({
             "Surname": m_surname,
@@ -133,31 +159,45 @@ if submit_button:
     if not barangay: errors.append("Barangay is required.")
     if not city_municipality: errors.append("City/Municipality is required.")
     if not province: errors.append("Province is required.")
-    
+
     if errors:
         for error in errors:
             st.error(error)
     else:
         # 2. Display Submitted Info
         st.success("Data Submitted Successfully!")
-        
+
         st.subheader("📝 Submitted Information Summary")
-        
+
         summary_df = pd.DataFrame([{
-            "Full Name": full_name,
-            "Sex": sex,
-            "Age": age,
-            "Location": f"{barangay}, {city_municipality}, {province}",
-            "Status": employment_status,
-            "Employed Members": employed_members,
-            "Income": f"PHP {monthly_income:,.2f}",
-            "Household Size": household_size,
-            "Housing Type": housing_type,
-            "4Ps": "Yes" if is_4ps else "No",
-            "PWD in HH": "Yes" if has_pwd else "No",
-            "Senior in HH": "Yes" if has_senior else "No",
-            "Solo Parent": "Yes" if is_solo_parent else "No",
-            "Disaster Affected": "Yes" if is_disaster_affected else "No"
+            "Full Name":
+            full_name,
+            "Sex":
+            sex,
+            "Age":
+            age,
+            "Location":
+            f"{barangay}, {city_municipality}, {province}",
+            "Status":
+            employment_status,
+            "Employed Members":
+            employed_members,
+            "Income":
+            f"PHP {monthly_income:,.2f}",
+            "Household Size":
+            household_size,
+            "Housing Type":
+            housing_type,
+            "4Ps":
+            "Yes" if is_4ps else "No",
+            "PWD in HH":
+            "Yes" if has_pwd else "No",
+            "Senior in HH":
+            "Yes" if has_senior else "No",
+            "Solo Parent":
+            "Yes" if is_solo_parent else "No",
+            "Disaster Affected":
+            "Yes" if is_disaster_affected else "No"
         }])
         st.table(summary_df)
 
@@ -168,7 +208,8 @@ if submit_button:
         # 3. Model Prediction
         # Columns: family_id, monthly_income, family_size, employed_members, has_senior, has_pwd, housing_type, location, receives_4ps
         input_data = {
-            "family_id": ["FAM-000"], # Use a generic string that looks like a valid ID
+            "family_id":
+            ["FAM-000"],  # Use a generic string that looks like a valid ID
             "monthly_income": [float(monthly_income)],
             "family_size": [int(household_size)],
             "employed_members": [int(employed_members)],
@@ -176,7 +217,9 @@ if submit_button:
             "has_pwd": [int(1 if has_pwd else 0)],
             "housing_type": [str(housing_type)],
             "location": [str(f"{barangay}, {city_municipality}")],
-            "receives_4ps": [int(1 if is_4ps else 0)]
+            "receives_4ps": [int(1 if is_4ps else 0)],
+            "employment_status": [employment_status],
+            "is_disaster_affected": [int(1 if is_disaster_affected else 0)]
         }
         input_df = pd.DataFrame(input_data)
 
@@ -186,16 +229,15 @@ if submit_button:
 
         if model:
             try:
-                # Ensure all columns are present and typed correctly for sklearn
-                # This helps avoid the isnan error by ensuring no unexpected types are passed
                 prediction = model.predict(input_df)[0]
-                
+
                 # Interpret prediction
                 if isinstance(prediction, (str, bytes)):
                     if isinstance(prediction, bytes):
                         prediction = prediction.decode('utf-8')
                     eligibility_result = str(prediction)
-                    is_eligible = "eligible" in eligibility_result.lower() and "not" not in eligibility_result.lower()
+                    is_eligible = "eligible" in eligibility_result.lower(
+                    ) and "not" not in eligibility_result.lower()
                 else:
                     is_eligible = bool(prediction)
                     eligibility_result = "Eligible" if is_eligible else "Not Eligible"
@@ -203,24 +245,29 @@ if submit_button:
                 # Generate Reason
                 reasons = []
                 if monthly_income < 10000:
-                    reasons.append("Income is within the qualifying range for support.")
+                    reasons.append(
+                        "Income is within the qualifying range for support.")
                 else:
-                    reasons.append("Income level may exceed priority thresholds.")
-                
+                    reasons.append(
+                        "Income level may exceed priority thresholds.")
+
                 if is_4ps:
-                    reasons.append("4Ps beneficiaries are prioritized for validation.")
-                
+                    reasons.append(
+                        "4Ps beneficiaries are prioritized for validation.")
+
                 if employed_members == 0:
-                    reasons.append("No employed members in the household increases vulnerability.")
-                
+                    reasons.append(
+                        "No employed members in the household increases vulnerability."
+                    )
+
                 reason = " ".join(reasons)
 
             except Exception as e:
                 st.warning(f"Model prediction error: {e}")
                 st.info("Using fallback logic based on criteria.")
-                
+
                 # Fallback Logic
-                if monthly_income < 20000 and (is_disaster_affected or employment_status in ["Unemployed", "Informal"]):
+                if monthly_income < 20000:
                     is_eligible = True
                     eligibility_result = "Eligible"
                     reason = "Applicant meets the fallback criteria: Low income and vulnerable status."
@@ -229,20 +276,20 @@ if submit_button:
                     eligibility_result = "Not Eligible"
                     reason = "Applicant does not meet the fallback criteria."
         else:
-             st.warning("Model not loaded. Using rule-based fallback.")
-             if monthly_income < 15000:
-                 is_eligible = True
-                 eligibility_result = "Eligible"
-                 reason = "Estimated eligibility based on income threshold."
-             else:
-                 is_eligible = False
-                 eligibility_result = "Not Eligible"
-                 reason = "Income exceeds the typical threshold for SAP."
+            st.warning("Model not loaded. Using rule-based fallback.")
+            if monthly_income < 15000:
+                is_eligible = True
+                eligibility_result = "Eligible"
+                reason = "Estimated eligibility based on income threshold."
+            else:
+                is_eligible = False
+                eligibility_result = "Not Eligible"
+                reason = "Income exceeds the typical threshold for SAP."
 
         # 4. Display Result
         st.markdown("---")
         st.header("🏁 Eligibility Result")
-        
+
         if is_eligible:
             st.success(f"### Result: {eligibility_result}")
         else:
@@ -250,4 +297,86 @@ if submit_button:
 
         # 5. Summary Reason
         st.subheader("ℹ️ Summary Reason")
-        st.write(reason)
+        detailed_reasons = []
+
+        # --- Income Analysis ---
+        if monthly_income < 10000:
+            detailed_reasons.append(
+                f"- Monthly income PHP {monthly_income:,.2f} is below the SAP threshold, making the household eligible for support."
+            )
+        elif 10000 <= monthly_income < 20000:
+            detailed_reasons.append(
+                f"- Monthly income PHP {monthly_income:,.2f} is near the eligibility threshold. Eligibility depends on additional vulnerability factors."
+            )
+        else:
+            detailed_reasons.append(
+                f"- Monthly income PHP {monthly_income:,.2f} exceeds typical SAP eligibility thresholds. Only strong vulnerability factors may qualify."
+            )
+
+        # --- Vulnerable Groups / Priority Sectors ---
+        if has_senior:
+            detailed_reasons.append(
+                "- Household has a Senior Citizen without pension, increasing eligibility."
+            )
+        if is_solo_parent:
+            detailed_reasons.append(
+                "- Applicant is a Solo Parent, increasing eligibility.")
+        if has_pwd:
+            detailed_reasons.append(
+                "- Household has a Person with Disability (PWD), increasing eligibility."
+            )
+        if employment_status in ["Unemployed", "Informal"]:
+            detailed_reasons.append(
+                f"- Employment status: {employment_status} indicates informal sector or economic vulnerability."
+            )
+        if is_disaster_affected:
+            detailed_reasons.append(
+                "- Household is affected by disasters, emergencies, or displacement, increasing eligibility."
+            )
+        if is_4ps:
+            detailed_reasons.append(
+                "- Family is part of 4Ps, giving priority for SAP support.")
+
+        # --- Household Size / Dependents ---
+        if household_size > 5:
+            detailed_reasons.append(
+                f"- Household size is {household_size}, indicating higher dependency and need."
+            )
+        elif household_size == 1:
+            detailed_reasons.append(
+                "- Single-person household; eligibility may depend solely on vulnerability factors."
+            )
+
+        # --- Housing / Living Conditions ---
+        if housing_type in ["Informal Settler", "Living with Relatives"]:
+            detailed_reasons.append(
+                f"- Housing type: {housing_type} indicates lower economic security, increasing eligibility."
+            )
+        elif housing_type == "Rented":
+            detailed_reasons.append(
+                "- Rented housing may indicate moderate vulnerability.")
+        else:
+            detailed_reasons.append(
+                "- Owned housing provides some economic stability, potentially reducing priority."
+            )
+
+        # --- Employment / Livelihood Impact ---
+        if employment_status in ["Unemployed", "Informal"
+                                 ] and is_disaster_affected:
+            detailed_reasons.append(
+                "- Informal sector worker affected by economic disruption, increasing eligibility."
+            )
+
+        # --- Overall Assessment ---
+        if is_eligible:
+            detailed_reasons.append(
+                "- Overall assessment: Household meets SAP eligibility criteria based on income, vulnerable sector membership, or priority program inclusion."
+            )
+        else:
+            detailed_reasons.append(
+                "- Overall assessment: Household does not meet sufficient SAP criteria for support under current rules."
+            )
+
+        # --- Display All Reasons ---
+        st.subheader("ℹ️ Detailed Summary Reason")
+        st.write("\n".join(detailed_reasons))
