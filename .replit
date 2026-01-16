@@ -1,7 +1,0 @@
-modules = ["python-3.11"]
-
-[nix]
-packages = ["glibcLocales"]
-
-[[ports]]
-localPort = 5000
