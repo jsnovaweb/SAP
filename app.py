@@ -13,12 +13,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for a professional, formal, and government-friendly look
+# Custom CSS for a professional, formal, and government-friendly DARK MODE look
 st.markdown("""
     <style>
-    /* Professional Light Background */
+    /* Professional Dark Background */
     .stApp {
-        background-color: #ffffff;
+        background-color: #0d1117;
+        color: #e6edf3;
     }
     
     /* Clean, Professional Buttons */
@@ -30,17 +31,18 @@ st.markdown("""
         color: white;
         font-weight: 600;
         font-size: 16px;
-        border: none;
+        border: 1px solid #30363d;
         transition: background-color 0.2s;
     }
     .stButton>button:hover {
         background-color: #002d86;
         color: white;
+        border-color: #8b949e;
     }
     
     /* Standard UI Text */
     h1 {
-        color: #0038a8;
+        color: #58a6ff;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         font-weight: 700;
         text-align: left;
@@ -48,36 +50,54 @@ st.markdown("""
         padding-bottom: 10px;
     }
     h2, h3 {
-        color: #333333;
+        color: #e6edf3;
         font-family: 'Inter', sans-serif;
         font-weight: 600;
         margin-top: 20px;
     }
     
     .section-header {
-        background-color: #f1f3f5;
-        color: #333333;
+        background-color: #161b22;
+        color: #e6edf3;
         padding: 12px 20px;
         border-radius: 4px;
         margin-bottom: 20px;
         font-size: 18px;
         font-weight: 600;
         border-left: 5px solid #0038a8;
+        border-top: 1px solid #30363d;
+        border-right: 1px solid #30363d;
+        border-bottom: 1px solid #30363d;
     }
     
     /* Input Fields */
     .stTextInput>div>div>input, .stSelectbox>div>div>div, .stNumberInput>div>div>input {
         border-radius: 4px !important;
+        background-color: #0d1117 !important;
+        color: #e6edf3 !important;
+        border-color: #30363d !important;
+    }
+    
+    /* Checkbox text color */
+    .stCheckbox label {
+        color: #e6edf3 !important;
     }
 
     /* Footer / Info */
     .footer {
         text-align: center;
-        color: #666666;
+        color: #8b949e;
         font-size: 12px;
         margin-top: 50px;
         padding: 20px;
-        border-top: 1px solid #eeeeee;
+        border-top: 1px solid #30363d;
+    }
+    
+    /* Success/Error override for dark mode */
+    .stAlert {
+        background-color: #161b22 !important;
+        color: #e6edf3 !important;
+        border: 1px solid #30363d !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -216,7 +236,7 @@ if submit_button:
         
         # Prediction Logic
         input_data = {
-            "family_id": ["N/A"],
+            "family_id": ["FAM-000"],
             "monthly_income": [float(monthly_income)],
             "family_size": [int(household_size)],
             "employed_members": [int(employed_members)],
