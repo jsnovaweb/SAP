@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import os
+import numpy as np
 
 # --- Configuration ---
 MODEL_PATH = "attached_assets/eligibility_model_1768571674807.joblib"
@@ -165,17 +166,17 @@ if submit_button:
             st.table(pd.DataFrame(household_members_data))
 
         # 3. Model Prediction
-        # Columns: family_id, monthly_income, family_size, employed_members, has_senior, has_pwd, housing_type, location, receives_4ps, sap_eligible
+        # Columns: family_id, monthly_income, family_size, employed_members, has_senior, has_pwd, housing_type, location, receives_4ps
         input_data = {
-            "family_id": ["N/A"], # Placeholder as family_id is still in model columns but removed from UI
-            "monthly_income": [monthly_income],
-            "family_size": [household_size],
-            "employed_members": [employed_members],
-            "has_senior": [1 if has_senior else 0],
-            "has_pwd": [1 if has_pwd else 0],
-            "housing_type": [housing_type],
-            "location": [f"{barangay}, {city_municipality}"],
-            "receives_4ps": [1 if is_4ps else 0]
+            "family_id": ["FAM-000"], # Use a generic string that looks like a valid ID
+            "monthly_income": [float(monthly_income)],
+            "family_size": [int(household_size)],
+            "employed_members": [int(employed_members)],
+            "has_senior": [int(1 if has_senior else 0)],
+            "has_pwd": [int(1 if has_pwd else 0)],
+            "housing_type": [str(housing_type)],
+            "location": [str(f"{barangay}, {city_municipality}")],
+            "receives_4ps": [int(1 if is_4ps else 0)]
         }
         input_df = pd.DataFrame(input_data)
 
@@ -185,7 +186,8 @@ if submit_button:
 
         if model:
             try:
-                # Attempt prediction
+                # Ensure all columns are present and typed correctly for sklearn
+                # This helps avoid the isnan error by ensuring no unexpected types are passed
                 prediction = model.predict(input_df)[0]
                 
                 # Interpret prediction
