@@ -12,7 +12,7 @@ st.set_page_config(page_title="SAP Eligibility Checker",
 @st.cache_resource
 def load_model():
     try:
-        model = joblib.load('eligibility_model.joblib')
+        model = joblib.load('model/eligibility_model.joblib')
         return model
     except Exception as e:
         st.error(f"Error loading model: {e}")
