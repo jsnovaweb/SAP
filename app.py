@@ -51,7 +51,6 @@ st.header("📋 Beneficiary Information")
 col1, col2 = st.columns(2)
 
 with col1:
-    family_id = st.text_input("Family ID", placeholder="e.g., FAM-12345")
     full_name = st.text_input("Full Name", placeholder="e.g., Juan Dela Cruz")
     sex = st.selectbox("Sex", ["Male", "Female"])
     age = st.number_input("Age", min_value=0, max_value=120, step=1)
@@ -129,7 +128,6 @@ submit_button = st.button("Check Eligibility", type="primary")
 if submit_button:
     # 1. Validation
     errors = []
-    if not family_id: errors.append("Family ID is required.")
     if not full_name: errors.append("Full Name is required.")
     if not barangay: errors.append("Barangay is required.")
     if not city_municipality: errors.append("City/Municipality is required.")
@@ -145,7 +143,6 @@ if submit_button:
         st.subheader("📝 Submitted Information Summary")
         
         summary_df = pd.DataFrame([{
-            "Family ID": family_id,
             "Full Name": full_name,
             "Sex": sex,
             "Age": age,
@@ -170,7 +167,7 @@ if submit_button:
         # 3. Model Prediction
         # Columns: family_id, monthly_income, family_size, employed_members, has_senior, has_pwd, housing_type, location, receives_4ps, sap_eligible
         input_data = {
-            "family_id": [family_id],
+            "family_id": ["N/A"], # Placeholder as family_id is still in model columns but removed from UI
             "monthly_income": [monthly_income],
             "family_size": [household_size],
             "employed_members": [employed_members],
