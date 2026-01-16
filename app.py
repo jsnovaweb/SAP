@@ -51,6 +51,7 @@ st.header("📋 Beneficiary Information")
 col1, col2 = st.columns(2)
 
 with col1:
+    family_id = st.text_input("Family ID", placeholder="e.g., FAM-12345")
     full_name = st.text_input("Full Name", placeholder="e.g., Juan Dela Cruz")
     sex = st.selectbox("Sex", ["Male", "Female"])
     age = st.number_input("Age", min_value=0, max_value=120, step=1)
@@ -60,8 +61,10 @@ with col1:
 
 with col2:
     employment_status = st.selectbox("Employment Status", ["Employed", "Self-Employed", "Unemployed", "Informal"])
+    employed_members = st.number_input("Number of Employed Members", min_value=0, step=1, value=0)
     monthly_income = st.number_input("Monthly Household Income (PHP)", min_value=0.0, step=100.0, format="%.2f")
     household_size = st.number_input("Household Size", min_value=1, step=1, value=1)
+    housing_type = st.selectbox("Housing Type", ["Owned", "Rented", "Informal Settler", "Living with Relatives"])
     
     # Checkboxes for specific criteria
     is_4ps = st.checkbox("4Ps Beneficiary")
@@ -126,6 +129,7 @@ submit_button = st.button("Check Eligibility", type="primary")
 if submit_button:
     # 1. Validation
     errors = []
+    if not family_id: errors.append("Family ID is required.")
     if not full_name: errors.append("Full Name is required.")
     if not barangay: errors.append("Barangay is required.")
     if not city_municipality: errors.append("City/Municipality is required.")
@@ -141,13 +145,16 @@ if submit_button:
         st.subheader("📝 Submitted Information Summary")
         
         summary_df = pd.DataFrame([{
+            "Family ID": family_id,
             "Full Name": full_name,
             "Sex": sex,
             "Age": age,
             "Location": f"{barangay}, {city_municipality}, {province}",
             "Status": employment_status,
+            "Employed Members": employed_members,
             "Income": f"PHP {monthly_income:,.2f}",
             "Household Size": household_size,
+            "Housing Type": housing_type,
             "4Ps": "Yes" if is_4ps else "No",
             "PWD in HH": "Yes" if has_pwd else "No",
             "Senior in HH": "Yes" if has_senior else "No",
@@ -161,23 +168,17 @@ if submit_button:
             st.table(pd.DataFrame(household_members_data))
 
         # 3. Model Prediction
-        # Prepare input for model (Assuming model expects specific feature names)
-        # Note: Since we don't know exact feature names model expects, we construct a generic DF.
-        # If model expects One-Hot Encoding, this might fail without the pre-processor.
-        # We will wrap this in a try-except block.
-        
+        # Columns: family_id, monthly_income, family_size, employed_members, has_senior, has_pwd, housing_type, location, receives_4ps, sap_eligible
         input_data = {
-            "age": [age],
+            "family_id": [family_id],
             "monthly_income": [monthly_income],
-            "household_size": [household_size],
-            "is_4ps": [1 if is_4ps else 0],
-            "has_pwd": [1 if has_pwd else 0],
+            "family_size": [household_size],
+            "employed_members": [employed_members],
             "has_senior": [1 if has_senior else 0],
-            "is_solo_parent": [1 if is_solo_parent else 0],
-            "is_disaster_affected": [1 if is_disaster_affected else 0],
-            # Add placeholders for categorical if needed by simple models
-             "sex_male": [1 if sex == "Male" else 0],
-             "employment_unemployed": [1 if employment_status == "Unemployed" else 0]
+            "has_pwd": [1 if has_pwd else 0],
+            "housing_type": [housing_type],
+            "location": [f"{barangay}, {city_municipality}"],
+            "receives_4ps": [1 if is_4ps else 0]
         }
         input_df = pd.DataFrame(input_data)
 
@@ -188,19 +189,19 @@ if submit_button:
         if model:
             try:
                 # Attempt prediction
-                # Note: This is a best-guess attempt. Real model might need exact feature match.
-                # If model has a 'predict' method
                 prediction = model.predict(input_df)[0]
                 
-                # Interpret prediction (Assuming 1=Eligible, 0=Not Eligible, or string)
-                if isinstance(prediction, str):
-                    eligibility_result = prediction
-                    is_eligible = "eligible" in prediction.lower() and "not" not in prediction.lower()
+                # Interpret prediction
+                if isinstance(prediction, (str, bytes)):
+                    if isinstance(prediction, bytes):
+                        prediction = prediction.decode('utf-8')
+                    eligibility_result = str(prediction)
+                    is_eligible = "eligible" in eligibility_result.lower() and "not" not in eligibility_result.lower()
                 else:
                     is_eligible = bool(prediction)
                     eligibility_result = "Eligible" if is_eligible else "Not Eligible"
 
-                # Generate Reason (Heuristic based since model doesn't output it typically)
+                # Generate Reason
                 reasons = []
                 if monthly_income < 10000:
                     reasons.append("Income is within the qualifying range for support.")
@@ -208,17 +209,16 @@ if submit_button:
                     reasons.append("Income level may exceed priority thresholds.")
                 
                 if is_4ps:
-                    reasons.append("4Ps beneficiaries are automatically cross-referenced.")
+                    reasons.append("4Ps beneficiaries are prioritized for validation.")
                 
-                if employment_status in ["Unemployed", "Informal"]:
-                    reasons.append("Employment status indicates high vulnerability.")
+                if employed_members == 0:
+                    reasons.append("No employed members in the household increases vulnerability.")
                 
                 reason = " ".join(reasons)
 
             except Exception as e:
-                # Fallback logic if model input schema doesn't match
-                st.warning(f"Model prediction error (Feature Mismatch): {e}")
-                st.info("Using fallback logic for demonstration.")
+                st.warning(f"Model prediction error: {e}")
+                st.info("Using fallback logic based on criteria.")
                 
                 # Fallback Logic
                 if monthly_income < 20000 and (is_disaster_affected or employment_status in ["Unemployed", "Informal"]):
@@ -228,7 +228,7 @@ if submit_button:
                 else:
                     is_eligible = False
                     eligibility_result = "Not Eligible"
-                    reason = "Applicant does not meet the fallback criteria (Income too high or stable employment)."
+                    reason = "Applicant does not meet the fallback criteria."
         else:
              st.warning("Model not loaded. Using rule-based fallback.")
              if monthly_income < 15000:
