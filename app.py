@@ -8,84 +8,76 @@ import numpy as np
 MODEL_PATH = "attached_assets/eligibility_model_1768571674807.joblib"
 st.set_page_config(
     page_title="SAP Eligibility Checker",
-    page_icon="🌈",
+    page_icon="🇵🇭",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for a "Kids/Friendly" look with a light background
+# Custom CSS for a professional, formal, and government-friendly look
 st.markdown("""
     <style>
-    /* Light Background */
+    /* Professional Light Background */
     .stApp {
-        background-color: #FFF9E6; /* Soft light yellow */
+        background-color: #ffffff;
     }
     
-    /* Rounded, Friendly Containers */
-    .main {
-        background-color: #FFF9E6;
-    }
-    
-    /* Big, Happy Buttons */
+    /* Clean, Professional Buttons */
     .stButton>button {
         width: 100%;
-        border-radius: 50px;
-        height: 4em;
-        background-color: #FF6B6B; /* Soft Red/Pink */
+        border-radius: 4px;
+        height: 3em;
+        background-color: #0038a8; /* Philippine Blue */
         color: white;
-        font-weight: bold;
-        font-size: 24px !important;
-        border: 4px solid #FFD93D;
-        box-shadow: 0 4px 0px #EE5253;
-        transition: transform 0.1s;
+        font-weight: 600;
+        font-size: 16px;
+        border: none;
+        transition: background-color 0.2s;
     }
     .stButton>button:hover {
-        transform: scale(1.02);
+        background-color: #002d86;
         color: white;
     }
     
-    /* Card Styling */
-    .stExpander, div[data-testid="stVerticalBlock"] > div {
-        border-radius: 20px;
-    }
-
-    /* Titles and Text */
+    /* Standard UI Text */
     h1 {
-        color: #4D96FF; /* Friendly Blue */
-        font-family: 'Comic Sans MS', cursive, sans-serif;
-        text-align: center;
-        font-size: 50px !important;
+        color: #0038a8;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 700;
+        text-align: left;
+        border-bottom: 2px solid #ce1126; /* Philippine Red accent */
+        padding-bottom: 10px;
     }
-    h2, h3, .stMarkdown {
-        color: #6BCB77; /* Soft Green */
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+    h2, h3 {
+        color: #333333;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        margin-top: 20px;
     }
     
     .section-header {
-        background-color: #4D96FF;
-        color: white;
-        padding: 20px;
-        border-radius: 25px;
-        margin-bottom: 25px;
-        text-align: center;
-        font-size: 30px;
-        font-weight: bold;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
-        border: 5px solid #6BCB77;
+        background-color: #f1f3f5;
+        color: #333333;
+        padding: 12px 20px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        border-left: 5px solid #0038a8;
     }
     
-    /* Input Styling */
-    .stTextInput>div>div>input, .stSelectbox>div>div>div {
-        border-radius: 15px !important;
-        border: 3px solid #4D96FF !important;
-        background-color: white !important;
-        font-size: 18px !important;
+    /* Input Fields */
+    .stTextInput>div>div>input, .stSelectbox>div>div>div, .stNumberInput>div>div>input {
+        border-radius: 4px !important;
     }
 
-    /* Metrics */
-    div[data-testid="stMetricValue"] {
-        font-size: 40px;
-        color: #FF6B6B;
+    /* Footer / Info */
+    .footer {
+        text-align: center;
+        color: #666666;
+        font-size: 12px;
+        margin-top: 50px;
+        padding: 20px;
+        border-top: 1px solid #eeeeee;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -106,125 +98,125 @@ model = load_model()
 
 # --- Legends ---
 SECTOR_LEGEND = {
-    "A": "Grandparents (Senior)",
-    "B": "Moms with Babies inside (Pregnant)",
-    "C": "Moms feeding Babies (Lactating)",
-    "D": "Special Friends (PWD)",
-    "E": "Super Parents (Solo Parent)",
-    "F": "Friends with no house (Homeless)"
+    "A": "Senior Citizen",
+    "B": "Pregnant",
+    "C": "Lactating Mother",
+    "D": "Person with Disability (PWD)",
+    "E": "Solo Parent",
+    "F": "Homeless"
 }
 
 HEALTH_CONDITION_LEGEND = {
-    "1": "Heart (Heart Disease)",
-    "2": "Strong Blood (Hypertension)",
-    "3": "Breathing (Lung Disease)",
-    "4": "Sugar (Diabetes)",
-    "5": "Big Sickness (Cancer)"
+    "1": "Heart Disease",
+    "2": "Hypertension",
+    "3": "Lung Disease",
+    "4": "Diabetes",
+    "5": "Cancer"
 }
 
 # --- Header ---
-st.markdown("<h1>🌟 Helper Bot 🌟</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align: center; color: #FF9F45;'>Let's see if we can help your family today!</h3>", unsafe_allow_html=True)
+st.title("🇵🇭 Social Amelioration Program (SAP) Eligibility Checker")
+st.markdown("**Official Assessment Portal** | Department of Social Welfare and Development")
+st.info("Please provide accurate information for an official eligibility assessment based on national guidelines.")
 
 # --- Form Content ---
 with st.container():
-    st.markdown('<div class="section-header">🏠 Tell us about you!</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">I. Primary Beneficiary Profile</div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     with col1:
-        full_name = st.text_input("What is your name? 😊", placeholder="Write your name here!")
+        full_name = st.text_input("Full Name (Surname, First Name, Middle Name)", placeholder="Enter complete legal name")
         c1, c2 = st.columns(2)
         with c1:
-            sex = st.selectbox("Are you a Boy or Girl?", ["Male", "Female"])
+            sex = st.selectbox("Sex", ["Male", "Female"])
         with c2:
-            age = st.number_input("How old are you? 🎂", min_value=0, max_value=120, step=1, value=30)
+            age = st.number_input("Age", min_value=0, max_value=120, step=1, value=30)
         
-        st.markdown("### 📍 Where do you live?")
-        barangay = st.text_input("Village Name (Barangay)")
-        city_municipality = st.text_input("Town Name (City)")
-        province = st.text_input("Big Place Name (Province)")
+        st.markdown("### Permanent Address")
+        barangay = st.text_input("Barangay")
+        city_municipality = st.text_input("City / Municipality")
+        province = st.text_input("Province")
 
     with col2:
-        st.markdown("### 💰 Money & Work")
-        employment_status = st.selectbox("Do you have a job?", ["Employed", "Self-Employed", "Unemployed", "Informal"])
-        employed_members = st.number_input("How many people in your house have jobs?", min_value=0, step=1, value=0)
-        monthly_income = st.number_input("How much money does your house get? (PHP)", min_value=0.0, step=100.0, format="%.2f", value=0.0)
+        st.markdown("### Socio-Economic Information")
+        employment_status = st.selectbox("Employment Status", ["Employed", "Self-Employed", "Unemployed", "Informal"])
+        employed_members = st.number_input("Number of Employed Members in Household", min_value=0, step=1, value=0)
+        monthly_income = st.number_input("Total Monthly Household Income (PHP)", min_value=0.0, step=100.0, format="%.2f", value=0.0)
         
-        st.markdown("### 🏘️ Your House")
-        household_size = st.number_input("How many people live in your house? 👨‍👩‍👧‍👦", min_value=1, step=1, value=1)
-        housing_type = st.selectbox("What kind of house is it?", ["Owned", "Rented", "Informal Settler", "Living with Relatives"])
+        st.markdown("### Housing & Household Size")
+        household_size = st.number_input("Total Household Size", min_value=1, step=1, value=1)
+        housing_type = st.selectbox("Housing Tenure Status", ["Owned", "Rented", "Informal Settler", "Living with Relatives"])
 
-    st.markdown("### 📝 Special Things")
+    st.markdown("### Priority Sector Identification")
     v_col1, v_col2, v_col3 = st.columns(3)
     with v_col1:
-        is_4ps = st.checkbox("Are you in 4Ps? 🎒", help="Special help from the government")
-        has_senior = st.checkbox("Is there a Grandparent in the house? 👵", help="Someone 60 years old or older")
+        is_4ps = st.checkbox("4Ps Beneficiary", help="Current member of Pantawid Pamilyang Pilipino Program")
+        has_senior = st.checkbox("Senior Citizen in Household", help="Member aged 60 or above")
     with v_col2:
-        has_pwd = st.checkbox("Is there a Special Friend? ♿", help="Person with Disability")
-        is_solo_parent = st.checkbox("Are you a Super Parent? 🦸", help="Solo Parent")
+        has_pwd = st.checkbox("PWD in Household", help="Person with Disability")
+        is_solo_parent = st.checkbox("Solo Parent")
     with v_col3:
-        is_disaster_affected = st.checkbox("Did a storm hurt your house? ⛈️", help="Victim of a disaster")
+        is_disaster_affected = st.checkbox("Affected by Calamity/Disaster", help="Victim of recent natural or man-made disasters")
 
 # --- Household Members Section ---
 household_members_data = []
 if household_size > 1:
-    st.markdown('<div class="section-header">👨‍👩‍👧‍👦 Who else lives with you?</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">II. Additional Household Members</div>', unsafe_allow_html=True)
     
-    # Unified Legend Expander
-    with st.expander("📖 Click here to learn about the special codes!"):
+    with st.expander("Reference Legends (Sector & Health Condition Codes)"):
         l_col1, l_col2 = st.columns(2)
         with l_col1:
-            st.markdown("**Groups**")
+            st.markdown("**SECTOR CODES**")
             for code, desc in SECTOR_LEGEND.items():
                 st.write(f"**{code}**: {desc}")
         with l_col2:
-            st.markdown("**Health**")
+            st.markdown("**HEALTH CODES**")
             for code, desc in HEALTH_CONDITION_LEGEND.items():
                 st.write(f"**{code}**: {desc}")
 
     for i in range(int(household_size) - 1):
         with st.container():
-            st.markdown(f"### Family Member #{i + 1}")
+            st.markdown(f"**Household Member #{i + 1}**")
             m_col1, m_col2, m_col3 = st.columns([2, 2, 2])
             
             with m_col1:
-                m_name = st.text_input(f"What is their name? (Member #{i+1})", key=f"name_{i}")
-                m_relation = st.text_input(f"How are they related to you?", key=f"rel_{i}")
+                m_name = st.text_input(f"Legal Name (Member #{i+1})", key=f"name_{i}")
+                m_relation = st.text_input(f"Relationship to Head", key=f"rel_{i}")
             
             with m_col2:
-                m_gender = st.selectbox(f"Boy or Girl?", ["Male", "Female"], key=f"gen_{i}")
-                m_occupation = st.text_input(f"What do they do for work?", key=f"occ_{i}")
+                m_gender = st.selectbox(f"Sex", ["Male", "Female"], key=f"gen_{i}")
+                m_occupation = st.text_input(f"Occupation", key=f"occ_{i}")
             
             with m_col3:
-                m_sector = st.multiselect(f"Pick a Group (A-F)", options=list(SECTOR_LEGEND.keys()), key=f"sec_{i}")
-                m_health = st.multiselect(f"Pick a Health code (1-5)", options=list(HEALTH_CONDITION_LEGEND.keys()), key=f"hea_{i}")
+                m_sector = st.multiselect(f"Sector Code (A-F)", options=list(SECTOR_LEGEND.keys()), key=f"sec_{i}")
+                m_health = st.multiselect(f"Health Code (1-5)", options=list(HEALTH_CONDITION_LEGEND.keys()), key=f"hea_{i}")
             
             household_members_data.append({
-                "Name": m_name,
+                "Full Name": m_name,
                 "Relation": m_relation,
-                "Gender": m_gender,
+                "Sex": m_gender,
                 "Occupation": m_occupation,
                 "Sector": ", ".join(m_sector),
-                "Health": ", ".join(m_health)
+                "Health Condition": ", ".join(m_health)
             })
             st.divider()
 
 # --- Submission ---
 st.markdown("---")
-btn_col1, btn_col2, btn_col3 = st.columns([1, 2, 1])
+btn_col1, btn_col2, btn_col3 = st.columns([1, 1, 1])
 with btn_col2:
-    submit_button = st.button("🚀 CLICK TO CHECK! 🚀", type="primary")
+    submit_button = st.button("EXECUTE ASSESSMENT", type="primary")
 
 if submit_button:
     if not full_name or not barangay or not city_municipality:
-        st.error("Oops! Please tell us your name and where you live first! 🙊")
+        st.error("Submission Failed: Required identifying information and address fields are missing.")
     else:
         # Results Section
-        st.markdown('<div class="section-header">🌈 We have the answer!</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header">III. Eligibility Determination</div>', unsafe_allow_html=True)
         
         # Prediction Logic
         input_data = {
-            "family_id": ["FAM-000"],
+            "family_id": ["N/A"],
             "monthly_income": [float(monthly_income)],
             "family_size": [int(household_size)],
             "employed_members": [int(employed_members)],
@@ -237,45 +229,49 @@ if submit_button:
         input_df = pd.DataFrame(input_data)
 
         is_eligible = False
-        eligibility_text = "Not Eligible"
+        eligibility_text = "NOT ELIGIBLE"
         
         if model:
             try:
                 prediction = model.predict(input_df)[0]
                 if isinstance(prediction, (str, bytes)):
-                    eligibility_text = prediction if isinstance(prediction, str) else prediction.decode('utf-8')
-                    is_eligible = "eligible" in eligibility_text.lower() and "not" not in eligibility_text.lower()
+                    eligibility_text = prediction.upper() if isinstance(prediction, str) else prediction.decode('utf-8').upper()
+                    is_eligible = "ELIGIBLE" in eligibility_text and "NOT" not in eligibility_text
                 else:
                     is_eligible = bool(prediction)
-                    eligibility_text = "Eligible" if is_eligible else "Not Eligible"
+                    eligibility_text = "ELIGIBLE" if is_eligible else "NOT ELIGIBLE"
             except Exception:
                 is_eligible = monthly_income < 15000 and (employed_members == 0 or is_disaster_affected)
-                eligibility_text = "Eligible" if is_eligible else "Not Eligible"
+                eligibility_text = "ELIGIBLE" if is_eligible else "NOT ELIGIBLE"
 
-        # Visual Feedback
+        # Result Display
         res_col1, res_col2 = st.columns(2)
         with res_col1:
             if is_eligible:
-                st.balloons()
-                st.markdown(f"<h1 style='color: #6BCB77; text-shadow: 2px 2px #fff;'>🎉 YES! 🎉</h1>", unsafe_allow_html=True)
-                st.markdown(f"<h3 style='text-align: center;'>You can get help!</h3>", unsafe_allow_html=True)
+                st.success(f"### DETERMINATION: {eligibility_text}")
             else:
-                st.markdown(f"<h1 style='color: #FF6B6B; text-shadow: 2px 2px #fff;'>Sorry...</h1>", unsafe_allow_html=True)
-                st.markdown(f"<h3 style='text-align: center;'>Not this time.</h3>", unsafe_allow_html=True)
+                st.error(f"### DETERMINATION: {eligibility_text}")
         
         with res_col2:
-            st.markdown("### 🎈 Why?")
+            st.markdown("**Summary of Assessment**")
             if is_eligible:
-                st.write("Yay! Your family meets the rules for help because your house needs a little extra support right now! 🏠✨")
+                st.write("Subject meets the criteria for Social Amelioration Program assistance based on income thresholds and priority sector status.")
             else:
-                st.write("It looks like your family has enough for now. But don't worry, keep being awesome! 🌟")
+                st.write("Subject does not meet the necessary criteria for program assistance at this time.")
 
-        # Data Summary Table
-        with st.expander("📝 See everything you told us"):
+        # Formal Data Summary
+        with st.expander("View Consolidated Assessment Data"):
             st.table(pd.DataFrame([{
-                "Name": full_name,
-                "Money": f"PHP {monthly_income:,.2f}",
-                "Family Size": household_size,
-                "Place": f"{barangay}, {city_municipality}",
-                "4Ps": "Yes" if is_4ps else "No",
+                "Primary Beneficiary": full_name,
+                "Monthly Income": f"PHP {monthly_income:,.2f}",
+                "HH Size": household_size,
+                "Location": f"{barangay}, {city_municipality}",
+                "Priority Status": "Yes" if (is_4ps or has_senior or has_pwd) else "No"
             }]))
+
+st.markdown("""
+    <div class="footer">
+        Social Amelioration Program Eligibility Assessment Tool<br>
+        © 2026 Republic of the Philippines | Official Government Use Only
+    </div>
+    """, unsafe_allow_html=True)
