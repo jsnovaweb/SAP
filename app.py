@@ -78,10 +78,10 @@ with col2:
 
 # Checkboxes for specific criteria
 is_4ps = st.checkbox("4Ps Beneficiary")
-has_pwd = st.checkbox("Disaster-Affected")
-has_senior = st.checkbox("Solo Parent")
-is_solo_parent = st.checkbox("Senior Citizen in Household")
-is_disaster_affected = st.checkbox("PWD in Household")
+has_pwd = st.checkbox("PWD in Household")
+has_senior = st.checkbox("Senior Citizen in Household")
+is_solo_parent = st.checkbox("Solo Parent")
+is_disaster_affected = st.checkbox("Disaster-Affected")
 
 # --- Household Members Section ---
 household_members_data = []
