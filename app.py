@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 # --- Page Configuration ---
 st.set_page_config(
